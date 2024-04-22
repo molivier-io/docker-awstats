@@ -1,5 +1,4 @@
-README
-======
+# README
 
 
 ![GitHub license](https://img.shields.io/github/license/justb4/docker-awstats)
@@ -10,8 +9,7 @@ All-in-one [Awstats](http://www.awstats.org) Docker Image for scheduled log-proc
 via built-in webpage. Find [built Docker Images on Docker Hub](https://hub.docker.com/repository/docker/justb4/awstats).
 NB some links below refer to relative files on GitHub, read [full/latest README here](https://github.com/justb4/docker-awstats).
 
-Features
---------
+## Features
 
 * multiple `awstats` configs, i.e. (web)sites
 * configure sites with an `.env` file with a few variables or with a complete `awstats` conf files
@@ -27,8 +25,7 @@ Features
 
 The aim was to make this image as self-contained as possible with minimal host-dependencies.
 
-Credits
--------
+## Credits
 
 This Docker setup is based on work from:
 https://github.com/pabra/docker_awstats.
@@ -41,8 +38,7 @@ Also for deploy in e.g. `Kubernetes`.
 I would be happy if someone manages to migrate `justb4/awstats` to Alpine, preferably
 extending https://github.com/pabra/docker_awstats !
 
-Quickstart
-----------
+## Quickstart
 
 See the [test](test) directory for a complete example.
 
@@ -54,14 +50,12 @@ Basically `justb4/awstats` needs to find files within the following (internal) d
 As `awstats` keeps its data onder `/var/lib/awstats` you will need to make that dir persistent over restarts,
 as a Docker Volume either mapped from a local dir on you host or an explicit Docker Volume.
 
-Awstats Documentation
----------------------
+## Awstats Documentation
 
 * All on [awstats config](http://www.awstats.org/docs/awstats_config.html)
 * https://blogging.dragon.org.uk/installing-awstats-on-ubuntu-16-04-lts/
 
-Design
-======
+## Design
 
 The intention is to have this Docker image as self-contained as possible in order to
 avoid host-bound/specific actions and tooling, in particular log processing via 
@@ -84,11 +78,9 @@ with the above features, input welcome!).
 The entry program is `supervisord` that will run a [setup program once](scripts/aw-setup.sh), `apache2` webserver daemon
 (for the landing page and logstats), and `cron` for Awstats processing.
  
-Advanced
-========
+## Advanced
 
-User-defined Scripts
---------------------
+### User-defined Scripts
 
 User-defined Shell/Bash scripts can be added in the directories `/aw-setup.d` and/or `/aw-update.d` by extending
 the Docker Image or easier via Docker Volume Mounting.
@@ -96,8 +88,7 @@ the Docker Image or easier via Docker Volume Mounting.
 Purpose is to provide hooks for preprocessing. For example, a script that fetches/syncs a logfile from a remote
 server just before [aw-update.sh](scripts/aw-update.sh) runs. This ensures the data is available.
 
-Analyze old log files
----------------------
+### Analyze old log files
 
 Awstats only processes lines in log files that are newer than the newest already
 known line.  
