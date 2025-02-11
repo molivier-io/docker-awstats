@@ -5,7 +5,7 @@
 ![GitHub release](https://img.shields.io/github/release/justb4/docker-awstats.svg)
 ![Docker Pulls](https://img.shields.io/docker/pulls/justb4/awstats.svg)
 
-All-in-one [Awstats](http://www.awstats.org) Docker Image for scheduled log-processing on multiple domains with minimal config, accessible 
+All-in-one [Awstats](http://www.awstats.org) Docker Image for scheduled log-processing on multiple domains with minimal config, accessible
 via built-in webpage. Find [built Docker Images on Docker Hub](https://hub.docker.com/repository/docker/justb4/awstats).
 NB some links below refer to relative files on GitHub, read [full/latest README here](https://github.com/justb4/docker-awstats).
 
@@ -16,11 +16,11 @@ NB some links below refer to relative files on GitHub, read [full/latest README 
 * single [aw-update.sh](scripts/aw-update.sh) script that updates stats for all configured sites
 * internally runs scheduled `awstats` (via `cron`) within the Docker container
 * GeoIP applied (i.e. see countries etc of visitors)
-* self-hosted via embedded Nginx HTTP server 
+* self-hosted via embedded Nginx HTTP server
 * landing HTML page for all configured sites
 * configurable `subpath` (prefix) for running behind reverse proxy
 * easy run with [docker-compose](test/docker-compose.yml)
-* run user-defined scripts once before startup (`aw-setup.sh`) 
+* run user-defined scripts once before startup (`aw-setup.sh`)
 * run user-defined scripts before each scheduled `awstats` run (`aw-update.sh`), e.g. for log file sync
 
 The aim was to make this image as self-contained as possible with minimal host-dependencies.
@@ -51,7 +51,7 @@ belongs to UID/GID 101, which are nginx IDs in alpine containers.
 ## Design
 
 The intention is to have this Docker image as self-contained as possible in order to
-avoid host-bound/specific actions and tooling, in particular log processing via 
+avoid host-bound/specific actions and tooling, in particular log processing via
 host-based `cron`, we may even apply `logrotate` later. Also allow for multiple domains with minimal config.
 
 Further design choices:
@@ -65,7 +65,7 @@ Further design choices:
 * configurable `subpath` (prefix) for running behind reverse proxy via `AWSTATS_PATH_PREFIX=` env var
 * make it easy run with [docker-compose](test/docker-compose.yml)
  
-A `nginx-alpine` Docker Image is used as base image. 
+A `nginx-alpine` Docker Image is used as base image.
 The entry program is `supervisord` that will run a [setup program once](scripts/aw-setup.sh), `nginx` webserver daemon
 (for the landing page and logstats), `fcgiwrap` for perl interpreting, and `cron` for Awstats processing.
  
@@ -82,7 +82,7 @@ server just before [aw-update.sh](scripts/aw-update.sh) runs. This ensures the d
 ### Analyze old log files
 
 Awstats only processes lines in log files that are newer than the newest already
-known line.  
+known line.
 This means you cannot analyze older log files later. Start with oldest ones first.
 You may need to delete already processed data by `rm /var/lib/awstats/*`
 
@@ -92,7 +92,7 @@ Example sketch of bash-script to process old Apache2 logfiles partly gzipped:
 #!/bin/bash
 #
 # Run the app
-# 
+#
 #
 # Example gzipped log files from mydomain.com-access.log.2 up to mydomain.com-access.log.60
 LOGDIR="/var/local/log"
