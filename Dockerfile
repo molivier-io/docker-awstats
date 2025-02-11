@@ -18,7 +18,7 @@ RUN apk add --no-cache awstats=${AWSTATS_VERSION} tzdata=${TZDATA_VERSION} super
 
 # Configurations, some are templates to be substituted with env vars
 ADD confs/awstats_env.conf confs/awstats_env.cron /etc/awstats/
-ADD confs/awstats_nginx.conf /etc/nginx/conf.d/
+ADD confs/awstats_nginx.conf /etc/nginx/conf.d/default.conf
 ADD confs/supervisord.conf /etc/
 ADD scripts/*.sh  /usr/local/bin/
 
