@@ -16,7 +16,7 @@ NB some links below refer to relative files on GitHub, read [full/latest README 
 * single [aw-update.sh](scripts/aw-update.sh) script that updates stats for all configured sites
 * internally runs scheduled `awstats` (via `cron`) within the Docker container
 * GeoIP applied (i.e. see countries etc of visitors)
-* self-hosted via embedded Apache2 HTTP server 
+* self-hosted via embedded Nginx HTTP server 
 * landing HTML page for all configured sites
 * configurable `subpath` (prefix) for running behind reverse proxy
 * easy run with [docker-compose](test/docker-compose.yml)
@@ -30,14 +30,6 @@ The aim was to make this image as self-contained as possible with minimal host-d
 This Docker setup is based on work from:
 https://github.com/pabra/docker_awstats.
 
-That image runs with Alpine Linux. Due to some of the more advanced 
-features I used, like GeoIP, bash-scripts, it became too complex (at least for me!) to use Alpine Linux
-and extend that good work. Also I wanted to reduce host-dependency, e.g. needing `cron` from host.
-Also for deploy in e.g. `Kubernetes`.
-
-I would be happy if someone manages to migrate `justb4/awstats` to Alpine, preferably
-extending https://github.com/pabra/docker_awstats !
-
 ## Quickstart
 
 See the [test](test) directory for a complete example.
@@ -48,7 +40,8 @@ Basically `justb4/awstats` needs to find files within the following (internal) d
 * under `/var/local/log` the log files, although you can determine log-locations/filenames in your `.env` or `.conf` file
 
 As `awstats` keeps its data onder `/var/lib/awstats` you will need to make that dir persistent over restarts,
-as a Docker Volume either mapped from a local dir on you host or an explicit Docker Volume.
+as a Docker Volume either mapped from a local dir on you host or an explicit Docker Volume. Just ensure it
+belongs to UID/GID 101, which are nginx IDs in alpine containers.
 
 ## Awstats Documentation
 
@@ -72,11 +65,9 @@ Further design choices:
 * configurable `subpath` (prefix) for running behind reverse proxy via `AWSTATS_PATH_PREFIX=` env var
 * make it easy run with [docker-compose](test/docker-compose.yml)
  
-A `debian-slim` Docker Image ((`buster` version) is used as base image. 
-(I'd love to use Alpine, but it became too complicated
-with the above features, input welcome!). 
-The entry program is `supervisord` that will run a [setup program once](scripts/aw-setup.sh), `apache2` webserver daemon
-(for the landing page and logstats), and `cron` for Awstats processing.
+A `nginx-alpine` Docker Image is used as base image. 
+The entry program is `supervisord` that will run a [setup program once](scripts/aw-setup.sh), `nginx` webserver daemon
+(for the landing page and logstats), `fcgiwrap` for perl interpreting, and `cron` for Awstats processing.
  
 ## Advanced
 
@@ -119,8 +110,8 @@ do
 done
 
 # Non-zipped remaining files
-docker exec -it awstats awstats -config=mydomain.com -update -LogFile="${LOGDIR}/${LOGNAME}.1"
-docker exec -it awstats awstats -config=mydomain.com -update -LogFile="${LOGDIR}/${LOGNAME}"
+docker exec -it awstats awstats.pl -config=mydomain.com -update -LogFile="${LOGDIR}/${LOGNAME}.1"
+docker exec -it awstats awstats.pl -config=mydomain.com -update -LogFile="${LOGDIR}/${LOGNAME}"
 
 
 ```

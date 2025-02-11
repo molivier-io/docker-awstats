@@ -1,32 +1,29 @@
-FROM httpd:2.4.41
-
-# FROM httpd:2.4.41-alpine
-# Problem: https://gitlab.alpinelinux.org/alpine/aports/issues/10792
-# apache2-mod-perl missing in Alpine recent, cannot use httpd:2.4.*-alpine and geoip not avail on alpine!
+FROM nginx:1.26.3-alpine3.20
 
 # Credits to Patrick Braune for providing first versions
 LABEL original_developer="Patrick Braune <https://github.com/pabra>" \
 	maintainer="Just van den Broecke <justb4@gmail.com>"
 
-ARG GEOIP_PACKAGES="libgeo-ipfree-perl libnet-ip-perl"
+# Generate GeoIP free library
+RUN apk add --no-cache --virtual .build-deps perl-utils make \
+	&& yes | cpan Geo::IPfree \
+	&& apk del .build-deps
 
-RUN \
-	apt-get update \
-	&& apt-get -yy install awstats gettext-base libapache2-mod-perl2 ${GEOIP_PACKAGES} supervisor cron \
-	&& echo 'Include conf/awstats_httpd.conf' >> /usr/local/apache2/conf/httpd.conf  \
-	&& mkdir /var/www && mv /usr/share/awstats/icon /var/www/icons && chown -R www-data:www-data /var/www \
-	&& mkdir -p /aw-setup.d && mkdir -p /aw-update.d \
-    && apt-get clean && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
+ARG TZDATA_VERSION=2024b-r0
+ARG AWSTATS_VERSION=7.9-r0
+
+RUN apk add --no-cache awstats=${AWSTATS_VERSION} tzdata=${TZDATA_VERSION} supervisor fcgiwrap \
+    && mkdir -p /aw-setup.d && mkdir -p /aw-update.d \
+	&& chmod 1777 /run
 
 # Configurations, some are templates to be substituted with env vars
 ADD confs/awstats_env.conf confs/awstats_env.cron /etc/awstats/
-ADD confs/awstats_httpd.conf /usr/local/apache2/conf/
+ADD confs/awstats_nginx.conf /etc/nginx/conf.d/
 ADD confs/supervisord.conf /etc/
 ADD scripts/*.sh  /usr/local/bin/
 
 # Default env vars
-ENV \
-	AWSTATS_CONF_DIR="/etc/awstats" \
+ENV AWSTATS_CONF_DIR="/etc/awstats" \
 	AWSTATS_SITES_DIR="/etc/awstats/sites" \
 	AWSTATS_CRON_SCHEDULE="*/15 * * * *" \
 	AWSTATS_PATH_PREFIX="" \

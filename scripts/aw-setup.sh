@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Generate complete awstats confs in /etc/awstats and setup cron schedule
 
@@ -12,9 +12,9 @@ do
 	esac
 done
 
-INDEX_HTML=/var/www/index.html
+INDEX_HTML=/usr/share/nginx/html/index.html
 
-pushd ${AWSTATS_SITES_DIR}
+cd ${AWSTATS_SITES_DIR}
 	echo "<h3>AWStats Sites</h3>" > ${INDEX_HTML}
 
 	# Env substitution sites
@@ -46,13 +46,13 @@ pushd ${AWSTATS_SITES_DIR}
 		cp ${SITE_CONF} ${AWSTATS_CONF_DIR}/awstats.${SITE}.conf
 	done
 
-popd
+cd -
 
 echo "Setup cron schedule: ${AWSTATS_CRON_SCHEDULE}"
 envsubst < ${AWSTATS_CONF_DIR}/awstats_env.cron > ${AWSTATS_CONF_DIR}/cronfile
 crontab ${AWSTATS_CONF_DIR}/cronfile
-rm /etc/cron.d/awstats
 crontab -l
+rm ${AWSTATS_CONF_DIR}/cronfile
 
 echo "STOP aw-setup: index.html="
 cat ${INDEX_HTML}

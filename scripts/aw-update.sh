@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Run awstats on all sites in /etc/awstats
 
@@ -12,14 +12,14 @@ do
 	esac
 done
 
-pushd /etc/awstats
+cd /etc/awstats
 	for SITE_CONF in $(ls awstats.*.conf)
 	do
 		SITE=${SITE_CONF%%.conf}
 		SITE=${SITE#awstats.}
 		echo "Update ${SITE} from ${SITE_CONF}"
-        awstats -config=${SITE} -update
+        awstats.pl -config=${SITE} -update
 	done
-popd
+
 echo "STOP aw-update"
 exit 0
