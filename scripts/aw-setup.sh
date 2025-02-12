@@ -7,9 +7,9 @@ echo "START aw-setup"
 echo "Running one-time provisioning"
 for f in /aw-setup.d/*
 do
-        case "$f" in
-          */*.sh) echo "$0: running $f" && . "$f" ;;
-        esac
+	case "$f" in
+	  */*.sh) echo "$0: running $f" && . "$f" ;;
+	esac
 done
 
 INDEX_HTML=/usr/share/nginx/html/index.html
@@ -17,34 +17,34 @@ INDEX_HTML=/usr/share/nginx/html/index.html
 cd ${AWSTATS_SITES_DIR}
         echo "<h3>AWStats Sites</h3>" > ${INDEX_HTML}
 
-        # Env substitution sites
-        SITE_ENVS=$(ls *.env)
-        for SITE_ENV in ${SITE_ENVS}
-        do
-                # https://stackoverflow.com/questions/19482123/extract-part-of-a-string-using-bash-cut-split/19482947
-                SITE=${SITE_ENV%%.env}
+	# Env substitution sites
+	SITE_ENVS=$(ls *.env)
+	for SITE_ENV in ${SITE_ENVS}
+	do
+		# https://stackoverflow.com/questions/19482123/extract-part-of-a-string-using-bash-cut-split/19482947
+		SITE=${SITE_ENV%%.env}
 
-                echo "Setup ${SITE} with ${SITE_ENV}"
-                echo "<br><a href=\"${AWSTATS_PATH_PREFIX}/aws/awstats.pl?config=${SITE}\">${SITE}</a>" >> ${INDEX_HTML}
+		echo "Setup ${SITE} with ${SITE_ENV}"
+		echo "<br><a href=\"${AWSTATS_PATH_PREFIX}/aws/awstats.pl?config=${SITE}\">${SITE}</a>" >> ${INDEX_HTML}
 
-                # generate AWStats config for SITE
-                source ${SITE_ENV}
-                envsubst < ${AWSTATS_CONF_DIR}/awstats_env.conf > ${AWSTATS_CONF_DIR}/awstats.${SITE}.conf
-        done
+		# generate AWStats config for SITE
+		source ${SITE_ENV}
+		envsubst < ${AWSTATS_CONF_DIR}/awstats_env.conf > ${AWSTATS_CONF_DIR}/awstats.${SITE}.conf
+	done
 
-        # Complete conf sites
-        SITE_CONFS=$(ls *.conf)
-        for SITE_CONF in ${SITE_CONFS}
-        do
-                # https://stackoverflow.com/questions/19482123/extract-part-of-a-string-using-bash-cut-split/19482947
-                SITE=${SITE_CONF%%.conf}
+	# Complete conf sites
+	SITE_CONFS=$(ls *.conf)
+	for SITE_CONF in ${SITE_CONFS}
+	do
+		# https://stackoverflow.com/questions/19482123/extract-part-of-a-string-using-bash-cut-split/19482947
+		SITE=${SITE_CONF%%.conf}
 
-                echo "Setup ${SITE} with ${SITE_CONF}"
-                echo "<br><a href=\"${AWSTATS_PATH_PREFIX}/aws/awstats.pl?config=${SITE}\">${SITE}</a>" >> ${INDEX_HTML}
+		echo "Setup ${SITE} with ${SITE_CONF}"
+		echo "<br><a href=\"${AWSTATS_PATH_PREFIX}/aws/awstats.pl?config=${SITE}\">${SITE}</a>" >> ${INDEX_HTML}
 
-                # copy config for SITE
-                cp ${SITE_CONF} ${AWSTATS_CONF_DIR}/awstats.${SITE}.conf
-        done
+		# copy config for SITE
+		cp ${SITE_CONF} ${AWSTATS_CONF_DIR}/awstats.${SITE}.conf
+	done
 
 cd -
 
