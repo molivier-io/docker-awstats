@@ -5,7 +5,7 @@
 ![GitHub release](https://img.shields.io/github/release/justb4/docker-awstats.svg)
 ![Docker Pulls](https://img.shields.io/docker/pulls/justb4/awstats.svg)
 
-All-in-one [Awstats](http://www.awstats.org) Docker Image for scheduled log-processing on multiple domains with minimal config, accessible
+All-in-one [Awstats](http://www.awstats.org) Docker Alpine Image for scheduled log-processing on multiple domains with minimal config, accessible
 via built-in webpage. Find [built Docker Images on Docker Hub](https://hub.docker.com/repository/docker/justb4/awstats).
 NB some links below refer to relative files on GitHub, read [full/latest README here](https://github.com/justb4/docker-awstats).
 
